@@ -12,7 +12,7 @@ At Liatrio, we used this as the foundation for our accounts. We created a privat
 
 ## Initialization
 
-See the [init](init) folder for initial setup instructions the first time the organization is being created.
+See the [master](master) folder for initial setup instructions the first time the organization is being created.
 
 ## Post-Initialization
 
