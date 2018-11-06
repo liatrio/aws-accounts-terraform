@@ -1,0 +1,67 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowOrgCreation",
+            "Effect": "Allow",
+            "Action": [
+                "organizations:CreateOrganization",
+                "organizations:DescribeOrganization",
+                "organizations:CreateAccount",
+                "organizations:ListAccounts",
+                "organizations:DescribeAccount",
+                "organizations:DescribeCreateAccountStatus"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "AllowServiceLinkedRoleCreation",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/aws-service-role/*"
+            ]
+        },
+        {
+            "Sid": "AllowIamCreateTerragruntPolicy",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreatePolicy",
+                "iam:DeletePolicy",
+                "iam:ListPolicyVersions",
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:policy/*Terragrunt*"
+            ]
+        },
+        {
+            "Sid": "AllowIamAttachTerragruntPolicy",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetUser",
+                "iam:AttachUserPolicy",
+                "iam:DetachUserPolicy",
+                "iam:ListAttachedUserPolicies"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:user/terraform-init"
+            ]
+        },
+        {
+            "Sid": "AllowRoleAssumptionToOrgAccounts",
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/OrganizationAccountAccessRole"
+            ]
+        }
+    ]
+}
