@@ -86,10 +86,6 @@ ADMIN_ACCESS_KEY=$(terraform output temp_admin_access_key)
 ADMIN_SECRET_KEY=$(terraform output temp_admin_secret_key | base64 --decode | keybase pgp decrypt)
 popd
 
-echo "*** CREDENTIALS FOR temp-admin USER ***"
-echo "AWS_ACCESS_KEY_ID=${ADMIN_ACCESS_KEY}"
-echo "AWS_SECRET_ACCESS_KEY=${ADMIN_SECRET_KEY}"
-
 echo "=== APPLYING ACCOUNTS CONFIGS ==="
 pushd ../accounts
 export_admin_keys
