@@ -13,8 +13,8 @@ resource "aws_organizations_organization" "org" {
 }
 
 resource "aws_organizations_account" "infosec" {
-  name       = "InfoSec Account 3"
-  email      = "infosec_003@fastfeedback.rocks"
+  name       = "InfoSec Account"
+  email      = "${var.infosec_acct_email}"
   depends_on = ["aws_organizations_organization.org"]
 
   lifecycle {
@@ -23,8 +23,8 @@ resource "aws_organizations_account" "infosec" {
 }
 
 resource "aws_organizations_account" "prod" {
-  name       = "Production Account 3"
-  email      = "production_003@fastfeedback.rocks"
+  name       = "Production Account"
+  email      = "${var.prod_acct_email}"
   depends_on = ["aws_organizations_organization.org"]
 
   lifecycle {
@@ -33,8 +33,8 @@ resource "aws_organizations_account" "prod" {
 }
 
 resource "aws_organizations_account" "non_prod" {
-  name       = "Non-Production Account 4"
-  email      = "non-production_004@fastfeedback.rocks"
+  name       = "Non-Production Account"
+  email      = "${var.non_prod_acct_email}"
   depends_on = ["aws_organizations_organization.org"]
 
   lifecycle {

@@ -2,7 +2,9 @@
 
 This repository contains the Terraform configurations needed to manage a multi-account AWS organization and the various roles that will be used within the accounts.
 
-At Liatrio, we used this as the foundation for our accounts. We created a private fork that contains the actual users and resources used in our accounts. Be sure to modify `shared.tfvars` to customize for your organization.
+At Liatrio, we used this as the foundation for our accounts. We created a private fork that contains the actual users and resources used in our accounts.
+
+Be sure to modify `shared.tfvars` to customize for your organization.
 
 ## Prerequisites
 
