@@ -2,7 +2,7 @@ terragrunt = {
   remote_state {
     backend = "s3"
     config {
-      bucket         = "admin-terraform-state-test103"
+      bucket         = "admin-terraform-state-test.your_organization.biz"
       key            = "${path_relative_to_include()}/terraform.tfstate"
       region         = "us-east-1"
       role_arn       = "arn:aws:iam::${get_env("TG_AWS_ACCT","${get_aws_account_id()}")}:role/TerragruntAdministrator"

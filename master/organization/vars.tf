@@ -7,3 +7,7 @@ variable "aws_default_region" {}
 
 variable "terraform_state_bucket" {}
 variable "terraform_state_dynamodb_table" {}
+
+variable "infosec_acct_email" {}
+variable "prod_acct_email" {}
+variable "non_prod_acct_email" {}
