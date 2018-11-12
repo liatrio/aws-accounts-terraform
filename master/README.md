@@ -18,8 +18,9 @@ This configuration will create an access key pair for the `temp-admin` user. The
 
 The following steps must be performed manually through the AWS Console before the Terraform can be run:
 1. Create the AWS root account and promptly lock it down.
-2. Create the policy named `TerraformInit` as defined in `TerraformInit-IAM-Policy.txt`.
-3. Create an `terraform-init` IAM user (no console access) and apply the `TerraformInit` policy.
+2. Request a service limit increase from AWS support to increase the number of accounts that can be connected to your organization. The default limit is one additional account.
+3. Create the policy named `TerraformInit` as defined in `TerraformInit-IAM-Policy.txt`.
+4. Create an `terraform-init` IAM user (no console access) and apply the `TerraformInit` policy.
 
 Run the Terraform configurations as the `terraform-init` user to setup the initial accounts and users:
 1. Run the `init.sh` script from the `init` folder. Pass the access key and secret key of the `terraform-init` user as parameters.
