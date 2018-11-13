@@ -1,3 +1,4 @@
+# SEE users.tf FOR IAM USER ACCOUNTS
 terraform {
   backend "s3" {}
 }
@@ -204,34 +205,4 @@ module "assume_role_policy_non_prod_developers" {
 resource "aws_iam_group_policy_attachment" "non_prod_developers_developer" {
   group      = "${aws_iam_group.non_prod_developers.name}"
   policy_arn = "${module.assume_role_policy_non_prod_developers.policy_arn}"
-}
-
-# USERS
-resource "aws_iam_user" "example_admin" {
-  name          = "Example Administrator"
-  force_destroy = true
-}
-
-resource "aws_iam_user_group_membership" "example_admin" {
-  user = "${aws_iam_user.example_admin.name}"
-
-  groups = [
-    "${aws_iam_group.infosec_admins.name}",
-    "${aws_iam_group.prod_admins.name}",
-    "${aws_iam_group.non_prod_admins.name}",
-  ]
-}
-
-resource "aws_iam_user" "example_dev" {
-  name          = "Example Developer"
-  force_destroy = true
-}
-
-resource "aws_iam_user_group_membership" "example_dev" {
-  user = "${aws_iam_user.example_dev.name}"
-
-  groups = [
-    "${aws_iam_group.prod_developers.name}",
-    "${aws_iam_group.non_prod_developers.name}",
-  ]
 }
