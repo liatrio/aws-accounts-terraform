@@ -208,7 +208,7 @@ data "aws_iam_policy_document" "crossaccount_assume_from_infosec_and_master" {
 }
 
 module "cross_account_role_master_billing" {
-  source = "../../modules/cross-account-role"
+  source                  = "../../modules/cross-account-role"
   assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec.json}"
   role                    = "Billing"
   role_policy_arn         = "${var.billing_default_arn}"

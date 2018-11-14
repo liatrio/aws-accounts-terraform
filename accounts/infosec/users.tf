@@ -21,10 +21,10 @@ module "example_developer" {
 }
 
 module "example_billing" {
-    source = "../../modules/iam-user-group"
-    user_name = "ExampleBilling"
+  source    = "../../modules/iam-user-group"
+  user_name = "ExampleBilling"
 
-    user_groups = [
-        "${aws_iam_group.master_billing.name}",
-    ]
+  user_groups = [
+    "${aws_iam_group.master_billing.name}",
+  ]
 }
