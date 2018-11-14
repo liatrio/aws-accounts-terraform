@@ -97,6 +97,7 @@ else
     terragrunt init
     unset "TG_AWS_ACCT"
 fi
+MASTER_ALIAS=$(terraform output account_alias)
 popd
 
 echo "=== CREATING temp-admin USER ==="
@@ -110,17 +111,20 @@ popd
 sleep 10 # give AWS some time for the new access key to be ready
 
 echo "=== APPLYING ACCOUNTS CONFIGS ==="
-pushd ../accounts
 export_admin_keys
-terragrunt apply-all
-popd
 pushd ../accounts/infosec
+terragrunt init
+terragrunt apply
 INFOSEC_ALIAS=$(terraform output account_alias)
 popd
 pushd ../accounts/prod
+terragrunt init
+terragrunt apply
 PROD_ALIAS=$(terraform output account_alias)
 popd
 pushd ../accounts/non-prod
+terragrunt init
+terragrunt apply
 NONPROD_ALIAS=$(terraform output account_alias)
 popd
 
@@ -129,7 +133,7 @@ if [[ -n "${LOGIN_USER}" ]]; then
     pushd ../utility/one-time-login
     terragrunt apply -var user_name=${LOGIN_USER} -var infosec_acct_id=${INFOSEC_AWS_ACCT} -var keybase=${KEYBASE_PROFILE}
     ENCRYPTED_PASS=$(terraform output temp_password)
-    rm terraform.tfstate*
+    terraform taint aws_iam_user_login_profile.login
     popd
 fi
 
@@ -154,3 +158,4 @@ echo " Prod Admin: https://signin.aws.amazon.com/switchrole?roleName=Administrat
 echo " NonProd Admin: https://signin.aws.amazon.com/switchrole?roleName=Administrator&account=${NONPROD_ALIAS}"
 echo " Prod Developer: https://signin.aws.amazon.com/switchrole?roleName=Developer&account=${PROD_ALIAS}"
 echo " NonProd Developer: https://signin.aws.amazon.com/switchrole?roleName=Developer&account=${NONPROD_ALIAS}"
+echo " Master Billing: https://signin.aws.amazon.com/switchrole?roleName=Billing&account=${MASTER_ALIAS}"

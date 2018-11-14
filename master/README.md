@@ -20,9 +20,10 @@ This configuration will create an access key pair for the `temp-admin` user. The
 
 The following steps must be performed manually through the AWS Console before the Terraform can be run:
 1. Create the AWS master account and promptly lock it down.
-2. Request a service limit increase from AWS support to increase the number of accounts that can be connected to your organization. The default limit is one additional account.
-3. Create the policy named `TerraformInit` as defined in `TerraformInit-IAM-Policy.txt`.
-4. Create an `terraform-init` IAM user (no console access) and apply the `TerraformInit` policy.
+2. Be sure to activate IAM access to billing if you want to delegate billing access to users. [documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_billing.html?icmpid=docs_iam_console#tutorial-billing-step1)
+3. Request a service limit increase from AWS support to increase the number of accounts that can be connected to your organization. The default limit is one additional account.
+4. Create the policy named `TerraformInit` as defined in `TerraformInit-IAM-Policy.txt`.
+5. Create an `terraform-init` IAM user (no console access) and apply the `TerraformInit` policy.
 
 Run the Terraform configurations as the `terraform-init` user to setup the initial accounts and users:
 1. Run the `init.sh` script from the `init` folder. Pass the access key and secret key of the `terraform-init` user and the keybase profile as parameters. Optionally, pass the name of an IAM user defined in your `accounts/infosec/users.tf` configuration to have a one-time password generated for the user. You can also specify an AWS region.

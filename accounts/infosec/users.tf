@@ -19,3 +19,12 @@ module "example_developer" {
     "${aws_iam_group.non_prod_developers.name}",
   ]
 }
+
+module "example_billing" {
+    source = "../../modules/iam-user-group"
+    user_name = "ExampleBilling"
+
+    user_groups = [
+        "${aws_iam_group.master_billing.name}",
+    ]
+}

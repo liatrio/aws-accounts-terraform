@@ -42,6 +42,10 @@ resource "aws_organizations_account" "non_prod" {
   }
 }
 
+resource "aws_iam_account_alias" "alias" {
+  account_alias = "${var.org_name}-master"
+}
+
 provider "aws" {
   alias = "assume_infosec"
 
@@ -203,6 +207,13 @@ data "aws_iam_policy_document" "crossaccount_assume_from_infosec_and_master" {
   }
 }
 
+module "cross_account_role_master_billing" {
+  source = "../../modules/cross-account-role"
+  assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec.json}"
+  role                    = "Billing"
+  role_policy_arn         = "${var.billing_default_arn}"
+}
+
 module "cross_account_role_infosec" {
   source = "../../modules/cross-account-role"
 
@@ -261,6 +272,18 @@ module "cross_account_role_terragrunt_reader" {
   assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec_and_master.json}"
   role                    = "TerragruntReader"
   role_policy_arn         = "${aws_iam_policy.terragrunt_reader.arn}"
+}
+
+module "assume_role_policy_master_billing" {
+  source = "../../modules/assume-role-policy"
+
+  providers = {
+    aws = "aws.assume_infosec"
+  }
+
+  account_name = "master"
+  account_id   = "${data.aws_caller_identity.current.account_id}"
+  role         = "${module.cross_account_role_master_billing.role_name}"
 }
 
 module "assume_role_policy_infosec_admin" {

@@ -118,6 +118,15 @@ resource "aws_iam_account_password_policy" "strict" {
 }
 
 # GROUPS
+resource "aws_iam_group" "master_billing" {
+  name = "MasterBilling"
+}
+
+resource "aws_iam_group_policy_attachment" "master_billing" {
+  group      = "${aws_iam_group.master_billing.name}"
+  policy_arn = "${data.terraform_remote_state.organization.master_billing_role_policy_arn}"
+}
+
 resource "aws_iam_group" "infosec_admins" {
   name = "InfosecAdmins"
 }
