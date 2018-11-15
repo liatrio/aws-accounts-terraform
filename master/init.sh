@@ -93,6 +93,7 @@ else
     
     echo "=== COPYING LOCAL STATE TO S3 ==="
     rm ./backend_local_override.tf || true
+    sleep 10 # give AWS some time for the IAM policy to take effect
     export "TG_AWS_ACCT=${INFOSEC_AWS_ACCT}"
     terragrunt init
     unset "TG_AWS_ACCT"
