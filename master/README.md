@@ -34,7 +34,7 @@ init.sh -a terraform_-_init_access_key -s terraform_-_init_secret_key -k keybase
 3. The script will configure Terragrunt to use a local backend for state and apply the configurations from the `organizations` folder to create the sub-accounts. When prompted, confirm that you want to create the resources.
 4. It will then configure Terragrunt to use the S3 remote backend and re-init Terraform to copy the state. When propmted, confirm that you want to copy the existing state to the new S3 backend.
 5. The script will then run the `temp-admin` configurations to create the `temp-admin` user. When prompted, confirm that you want to create the resources. It will then use the output of the apply to retrieve the secret key and encrypted secret access key for the `temp-admin` user.
-6. Next, it will apply all the configurations in the `accounts` folder as the `temp-admin` user. Make sure you have added IAM user resources to `accounts/infosec/users.tf` so you will be able to access the new accounts. When prompted, confirm that you wan to apply the configs for all the sub-folders.
+6. Next, it will apply all the configurations in the `accounts` folder as the `temp-admin` user. Make sure you have added IAM user resources to `accounts/infosec/users.tf` so you will be able to access the new accounts. When prompted, confirm that you want to apply the configs for all the sub-folders.
 7. If you passed the `-u` parameter, it will generate the one-time password for the specified user. When prompted, confirm that you want to create the login. 
 8. Finally, it will delete the `temp-admin` user and display the login URLs for your new account. When prompted, confirm that you want to delete the resources.
 
