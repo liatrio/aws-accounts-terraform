@@ -1,7 +1,4 @@
-variable "cloudtrail_bucket_name" {
-  default = "cloudtrail.123123.fastfeedback.rocks"
-}
-
+variable "cloudtrail_bucket_name" {}
 variable "terraform_state_bucket" {}
 variable "terraform_state_bucket_region" {}
 variable "aws_default_region" {}

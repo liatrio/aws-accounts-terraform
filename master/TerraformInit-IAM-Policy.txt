@@ -17,6 +17,18 @@
             ]
         },
         {
+            "Sid": "AllowAliasAdmin",
+            "Effect": "Allow",
+            "Action": [
+                "iam:ListAccountAliases",
+                "iam:CreateAccountAlias",
+                "iam:DeleteAccountAlias"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
             "Sid": "AllowServiceLinkedRoleCreation",
             "Effect": "Allow",
             "Action": [
@@ -24,6 +36,20 @@
             ],
             "Resource": [
                 "arn:aws:iam::*:role/aws-service-role/*"
+            ]
+        },
+        {
+            "Sid": "AllowBillingRoleCreation",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:CreateRole",
+                "iam:ListAttachedRolePolicies",
+                "iam:AttachRolePolicy",
+                "iam:UpdateAssumeRolePolicy"
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/Billing"
             ]
         },
         {

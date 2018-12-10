@@ -1,4 +1,4 @@
-# Liatrio AWS Terraform
+# AWS Organization Terraform
 
 This repository contains the Terraform configurations needed to manage a multi-account AWS organization and the various roles that will be used within the accounts.
 
