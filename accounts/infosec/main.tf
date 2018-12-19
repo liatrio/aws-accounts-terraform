@@ -215,3 +215,49 @@ resource "aws_iam_group_policy_attachment" "non_prod_developers_developer" {
   group      = "${aws_iam_group.non_prod_developers.name}"
   policy_arn = "${module.assume_role_policy_non_prod_developers.policy_arn}"
 }
+
+data "aws_iam_policy_document" "change_own_credentials" {
+  statement {
+    sid = "ReadUsersAndPassPolicy"
+
+    actions = [
+      "iam:ListUsers",
+      "iam:GetAccountPasswordPolicy",
+    ]
+
+    resources = [
+      "*",
+    ]
+  }
+
+  statement {
+    sid = "ChangeOwnCredentials"
+
+    actions = [
+      "iam:*AccessKey*",
+      "iam:ChangePassword",
+      "iam:GetUser",
+      "iam:*ServiceSpecificCredential*",
+      "iam:*SigningCertificate*",
+    ]
+
+    resources = [
+      "arn:aws:iam::*:user/&{aws:username}",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "change_own_credentials" {
+  name   = "ChangeOwnCredentials"
+  path   = "/"
+  policy = "${data.aws_iam_policy_document.change_own_credentials.json}"
+}
+
+resource "aws_iam_group" "all_iam_users" {
+  name = "AllIamUsers"
+}
+
+resource "aws_iam_group_policy_attachment" "all_iam_users" {
+  group      = "${aws_iam_group.all_iam_users.name}"
+  policy_arn = "${aws_iam_policy.change_own_credentials.arn}"
+}
