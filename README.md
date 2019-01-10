@@ -4,6 +4,8 @@ This repository contains the Terraform configurations needed to manage a multi-a
 
 At Liatrio, we used this as the foundation for our accounts. We created a private fork that contains the actual users and resources used in our accounts.
 
+Related blog post: [liatrio.com/secure-aws-account-structure](https://liatrio.com/secure-aws-account-structure/)
+
 Be sure to modify `shared.tfvars` to customize for your organization.
 
 ## Prerequisites
