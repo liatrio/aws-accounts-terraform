@@ -10,7 +10,11 @@
                 "organizations:CreateAccount",
                 "organizations:ListAccounts",
                 "organizations:DescribeAccount",
-                "organizations:DescribeCreateAccountStatus"
+                "organizations:DescribeCreateAccountStatus",
+                "organizations:ListRoots",
+                "organizations:ListAWSServiceAccessForOrganization",
+                "organizations:ListParents",
+                "organizations:ListTagsForResource",
             ],
             "Resource": [
                 "*"
