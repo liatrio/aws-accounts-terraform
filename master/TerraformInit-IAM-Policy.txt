@@ -14,7 +14,7 @@
                 "organizations:ListRoots",
                 "organizations:ListAWSServiceAccessForOrganization",
                 "organizations:ListParents",
-                "organizations:ListTagsForResource",
+                "organizations:ListTagsForResource"
             ],
             "Resource": [
                 "*"
