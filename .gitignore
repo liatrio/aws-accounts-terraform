@@ -6,3 +6,6 @@
 # OS X
 .history
 .DS_Store
+
+# IDE
+.idea

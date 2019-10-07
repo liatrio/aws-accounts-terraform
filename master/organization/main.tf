@@ -14,7 +14,7 @@ resource "aws_organizations_organization" "org" {
 
 resource "aws_organizations_account" "infosec" {
   name       = "InfoSec Account"
-  email      = "${var.infosec_acct_email}"
+  email      = var.infosec_acct_email
   depends_on = ["aws_organizations_organization.org"]
 
   lifecycle {
@@ -24,7 +24,7 @@ resource "aws_organizations_account" "infosec" {
 
 resource "aws_organizations_account" "prod" {
   name       = "Production Account"
-  email      = "${var.prod_acct_email}"
+  email      = var.prod_acct_email
   depends_on = ["aws_organizations_organization.org"]
 
   lifecycle {
@@ -34,7 +34,7 @@ resource "aws_organizations_account" "prod" {
 
 resource "aws_organizations_account" "non_prod" {
   name       = "Non-Production Account"
-  email      = "${var.non_prod_acct_email}"
+  email      = var.non_prod_acct_email
   depends_on = ["aws_organizations_organization.org"]
 
   lifecycle {
@@ -53,7 +53,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::${aws_organizations_account.infosec.id}:role/OrganizationAccountAccessRole"
   }
 
-  region = "${var.aws_default_region}"
+  region = var.aws_default_region
 }
 
 provider "aws" {
@@ -63,7 +63,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::${aws_organizations_account.prod.id}:role/OrganizationAccountAccessRole"
   }
 
-  region = "${var.aws_default_region}"
+  region = var.aws_default_region
 }
 
 provider "aws" {
@@ -73,7 +73,7 @@ provider "aws" {
     role_arn = "arn:aws:iam::${aws_organizations_account.non_prod.id}:role/OrganizationAccountAccessRole"
   }
 
-  region = "${var.aws_default_region}"
+  region = var.aws_default_region
 }
 
 data "aws_iam_policy_document" "terragrunt_admin" {
@@ -141,7 +141,7 @@ data "aws_iam_policy_document" "terragrunt_admin" {
 
 resource "aws_iam_policy" "terragrunt_admin" {
   name        = "TerragruntAdminAccess"
-  policy      = "${data.aws_iam_policy_document.terragrunt_admin.json}"
+  policy      = data.aws_iam_policy_document.terragrunt_admin.json
   description = "Grants permissions needed by terragrunt to manage Terraform remote state"
   provider    = "aws.assume_infosec"
 }
@@ -174,7 +174,7 @@ data "aws_iam_policy_document" "terragrunt_reader" {
 
 resource "aws_iam_policy" "terragrunt_reader" {
   name        = "TerragruntReadAccess"
-  policy      = "${data.aws_iam_policy_document.terragrunt_reader.json}"
+  policy      = data.aws_iam_policy_document.terragrunt_reader.json
   description = "Grants permissions to read Terraform remote state"
   provider    = "aws.assume_infosec"
 }
@@ -209,9 +209,9 @@ data "aws_iam_policy_document" "crossaccount_assume_from_infosec_and_master" {
 
 module "cross_account_role_master_billing" {
   source                  = "../../modules/cross-account-role"
-  assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec.json}"
+  assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec.json
   role                    = "Billing"
-  role_policy_arn         = "${var.billing_default_arn}"
+  role_policy_arn         = var.billing_default_arn
 }
 
 module "cross_account_role_infosec" {
@@ -221,9 +221,9 @@ module "cross_account_role_infosec" {
     aws = "aws.assume_infosec"
   }
 
-  assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec.json}"
+  assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec.json
   role                    = "Administrator"
-  role_policy_arn         = "${var.administrator_default_arn}"
+  role_policy_arn         = var.administrator_default_arn
 }
 
 module "cross_account_role_prod" {
@@ -233,9 +233,9 @@ module "cross_account_role_prod" {
     aws = "aws.assume_prod"
   }
 
-  assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec.json}"
+  assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec.json
   role                    = "Administrator"
-  role_policy_arn         = "${var.administrator_default_arn}"
+  role_policy_arn         = var.administrator_default_arn
 }
 
 module "cross_account_role_non_prod" {
@@ -245,9 +245,9 @@ module "cross_account_role_non_prod" {
     aws = "aws.assume_non_prod"
   }
 
-  assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec.json}"
+  assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec.json
   role                    = "Administrator"
-  role_policy_arn         = "${var.administrator_default_arn}"
+  role_policy_arn         = var.administrator_default_arn
 }
 
 module "cross_account_role_terragrunt_admin" {
@@ -257,9 +257,9 @@ module "cross_account_role_terragrunt_admin" {
     aws = "aws.assume_infosec"
   }
 
-  assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec_and_master.json}"
+  assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec_and_master.json
   role                    = "TerragruntAdministrator"
-  role_policy_arn         = "${aws_iam_policy.terragrunt_admin.arn}"
+  role_policy_arn         = aws_iam_policy.terragrunt_admin.arn
 }
 
 module "cross_account_role_terragrunt_reader" {
@@ -269,9 +269,9 @@ module "cross_account_role_terragrunt_reader" {
     aws = "aws.assume_infosec"
   }
 
-  assume_role_policy_json = "${data.aws_iam_policy_document.crossaccount_assume_from_infosec_and_master.json}"
+  assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec_and_master.json
   role                    = "TerragruntReader"
-  role_policy_arn         = "${aws_iam_policy.terragrunt_reader.arn}"
+  role_policy_arn         = aws_iam_policy.terragrunt_reader.arn
 }
 
 module "assume_role_policy_master_billing" {
@@ -282,8 +282,8 @@ module "assume_role_policy_master_billing" {
   }
 
   account_name = "master"
-  account_id   = "${data.aws_caller_identity.current.account_id}"
-  role         = "${module.cross_account_role_master_billing.role_name}"
+  account_id   = data.aws_caller_identity.current.account_id
+  role         = module.cross_account_role_master_billing.role_name
 }
 
 module "assume_role_policy_infosec_admin" {
@@ -294,8 +294,8 @@ module "assume_role_policy_infosec_admin" {
   }
 
   account_name = "infosec"
-  account_id   = "${aws_organizations_account.infosec.id}"
-  role         = "${module.cross_account_role_infosec.role_name}"
+  account_id   = aws_organizations_account.infosec.id
+  role         = module.cross_account_role_infosec.role_name
 }
 
 module "assume_role_policy_prod_admin" {
@@ -306,8 +306,8 @@ module "assume_role_policy_prod_admin" {
   }
 
   account_name = "prod"
-  account_id   = "${aws_organizations_account.prod.id}"
-  role         = "${module.cross_account_role_prod.role_name}"
+  account_id   = aws_organizations_account.prod.id
+  role         = module.cross_account_role_prod.role_name
 }
 
 module "assume_role_policy_non_prod_admin" {
@@ -318,8 +318,8 @@ module "assume_role_policy_non_prod_admin" {
   }
 
   account_name = "non-prod"
-  account_id   = "${aws_organizations_account.non_prod.id}"
-  role         = "${module.cross_account_role_non_prod.role_name}"
+  account_id   = aws_organizations_account.non_prod.id
+  role         = module.cross_account_role_non_prod.role_name
 }
 
 module "assume_role_policy_terragrunt_admin" {
@@ -330,8 +330,8 @@ module "assume_role_policy_terragrunt_admin" {
   }
 
   account_name = "infosec"
-  account_id   = "${aws_organizations_account.infosec.id}"
-  role         = "${module.cross_account_role_terragrunt_admin.role_name}"
+  account_id   = aws_organizations_account.infosec.id
+  role         = module.cross_account_role_terragrunt_admin.role_name
 }
 
 module "assume_role_policy_terragrunt_reader" {
@@ -342,30 +342,30 @@ module "assume_role_policy_terragrunt_reader" {
   }
 
   account_name = "infosec"
-  account_id   = "${aws_organizations_account.infosec.id}"
-  role         = "${module.cross_account_role_terragrunt_reader.role_name}"
+  account_id   = aws_organizations_account.infosec.id
+  role         = module.cross_account_role_terragrunt_reader.role_name
 }
 
 module "assume_role_policy_terragrunt_admin_from_master" {
   source       = "../../modules/assume-role-policy"
   account_name = "infosec"
-  account_id   = "${aws_organizations_account.infosec.id}"
-  role         = "${module.cross_account_role_terragrunt_admin.role_name}"
+  account_id   = aws_organizations_account.infosec.id
+  role         = module.cross_account_role_terragrunt_admin.role_name
 }
 
 resource "aws_iam_user_policy_attachment" "assume_role_policy_terragrunt_admin_from_master" {
-  user       = "${var.terraform_init_user_name}"
-  policy_arn = "${module.assume_role_policy_terragrunt_admin_from_master.policy_arn}"
+  user       = var.terraform_init_user_name
+  policy_arn = module.assume_role_policy_terragrunt_admin_from_master.policy_arn
 }
 
 module "assume_role_policy_terragrunt_reader_from_master" {
   source       = "../../modules/assume-role-policy"
   account_name = "infosec"
-  account_id   = "${aws_organizations_account.infosec.id}"
-  role         = "${module.cross_account_role_terragrunt_reader.role_name}"
+  account_id   = aws_organizations_account.infosec.id
+  role         = module.cross_account_role_terragrunt_reader.role_name
 }
 
 resource "aws_iam_user_policy_attachment" "assume_role_policy_terragrunt_reader_from_master" {
-  user       = "${var.terraform_init_user_name}"
-  policy_arn = "${module.assume_role_policy_terragrunt_reader_from_master.policy_arn}"
+  user       = var.terraform_init_user_name
+  policy_arn = module.assume_role_policy_terragrunt_reader_from_master.policy_arn
 }

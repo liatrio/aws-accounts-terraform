@@ -6,11 +6,11 @@ The Terraform configurations in this folder should be run from the master accoun
 - Prod
 - Non-Prod
 
-Note that each account requires a unique email address, not associated with any other AWS account. Update the variables in the root [`shared.tfvars`](../shared.tfvars) with email addresses for your organization.
+Note that each account requires a unique email address, not associated with any other AWS account. Update the variables in the root [`shared.hcl`](../shared.hcl) with email addresses for your organization.
 
 Within each sub-account, the configurations create an admin role tied to the default administrator policy and set up a trust with the infosec account for role assumption. Policies are created in the Infosec account that allow role assumption for each of those sub-account admin role. A `temp-admin` user is created with those policies attached.
 
-A Terragrunt policy and associated role are created that allows updating the S3 bucket and Dynamo DB table that are used by Terraform for managing state. Terragrunt is configured to assume this role in the root [`terraform.tfvars`](../terraform.tfvars).
+A Terragrunt policy and associated role are created that allows updating the S3 bucket and Dynamo DB table that are used by Terraform for managing state. Terragrunt is configured to assume this role in the root [`terragrunt.hcl`](../terragrunt.hcl).
 
 ## Prerequisites
 

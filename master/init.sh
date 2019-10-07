@@ -87,10 +87,10 @@ if [[ -n "${SKIP_LOCAL_STATE}" ]]; then
 else
     echo "=== RUNNING ORG CONFIGS WITH LOCAL STATE ==="
     cp overrides/backend_local_override.tf .
-    terragrunt init --terragrunt-config terraform-local.tfvars
-    terragrunt apply --terragrunt-config terraform-local.tfvars
+    terragrunt init --terragrunt-config terragrunt-local.hcl
+    terragrunt apply --terragrunt-config terragrunt-local.hcl
     INFOSEC_AWS_ACCT=$(terraform output infosec_acct_id)
-    
+
     echo "=== COPYING LOCAL STATE TO S3 ==="
     rm ./backend_local_override.tf || true
     sleep 10 # give AWS some time for the IAM policy to take effect

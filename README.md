@@ -6,7 +6,7 @@ At Liatrio, we used this as the foundation for our accounts. We created a privat
 
 Related blog post: [liatrio.com/blog/secure-aws-account-structure-with-terraform-and-terragrunt](https://www.liatrio.com/blog/secure-aws-account-structure-with-terraform-and-terragrunt)
 
-Be sure to modify `shared.tfvars` to customize for your organization.
+Be sure to modify `shared.hcl` to customize for your organization.
 
 ## Prerequisites
 
