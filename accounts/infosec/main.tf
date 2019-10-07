@@ -10,25 +10,25 @@ data "aws_caller_identity" "current" {
 data "terraform_remote_state" "organization" {
   backend = "s3"
 
-  config {
-    bucket   = "${var.terraform_state_bucket}"
+  config = {
+    bucket   = var.terraform_state_bucket
     key      = "master/organization/terraform.tfstate"
-    region   = "${var.terraform_state_bucket_region}"
+    region   = var.terraform_state_bucket_region
     role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/TerragruntReader"
   }
 }
 
 provider "aws" {
   alias  = "noassume"
-  region = "${var.aws_default_region}"
+  region = var.aws_default_region
 }
 
 provider "aws" {
   assume_role {
-    role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.infosec_acct_id}:role/Administrator"
+    role_arn = "arn:aws:iam::${data.terraform_remote_state.organization.outputs.infosec_acct_id}:role/Administrator"
   }
 
-  region = "${var.aws_default_region}"
+  region = var.aws_default_region
 }
 
 resource "aws_iam_account_alias" "alias" {
@@ -82,8 +82,8 @@ data "aws_iam_policy_document" "cloudtrail_bucket" {
 }
 
 resource "aws_s3_bucket" "cloudtrail" {
-  policy = "${data.aws_iam_policy_document.cloudtrail_bucket.json}"
-  bucket = "${var.cloudtrail_bucket_name}"
+  policy = data.aws_iam_policy_document.cloudtrail_bucket.json
+  bucket = var.cloudtrail_bucket_name
   acl    = "log-delivery-write"
 
   versioning {
@@ -102,7 +102,7 @@ resource "aws_s3_bucket" "cloudtrail" {
 resource "aws_cloudtrail" "cloudtrail" {
   name                       = "cloudtrail-infosec"
   s3_key_prefix              = "infosec"
-  s3_bucket_name             = "${aws_s3_bucket.cloudtrail.id}"
+  s3_bucket_name             = aws_s3_bucket.cloudtrail.id
   enable_log_file_validation = true
   is_multi_region_trail      = true
 }
@@ -123,8 +123,8 @@ resource "aws_iam_group" "master_billing" {
 }
 
 resource "aws_iam_group_policy_attachment" "master_billing" {
-  group      = "${aws_iam_group.master_billing.name}"
-  policy_arn = "${data.terraform_remote_state.organization.master_billing_role_policy_arn}"
+  group      = aws_iam_group.master_billing.name
+  policy_arn = data.terraform_remote_state.organization.outputs.master_billing_role_policy_arn
 }
 
 resource "aws_iam_group" "infosec_admins" {
@@ -132,18 +132,18 @@ resource "aws_iam_group" "infosec_admins" {
 }
 
 resource "aws_iam_group_policy_attachment" "infosec_admins_administrator" {
-  group      = "${aws_iam_group.infosec_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.infosec_admin_role_policy_arn}"
+  group      = aws_iam_group.infosec_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.infosec_admin_role_policy_arn
 }
 
 resource "aws_iam_group_policy_attachment" "infosec_admins_terragrunt_admin" {
-  group      = "${aws_iam_group.infosec_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.terragrunt_admin_role_policy_arn}"
+  group      = aws_iam_group.infosec_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.terragrunt_admin_role_policy_arn
 }
 
 resource "aws_iam_group_policy_attachment" "infosec_admins_terragrunt_reader" {
-  group      = "${aws_iam_group.infosec_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.terragrunt_reader_role_policy_arn}"
+  group      = aws_iam_group.infosec_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.terragrunt_reader_role_policy_arn
 }
 
 resource "aws_iam_group" "prod_admins" {
@@ -151,18 +151,18 @@ resource "aws_iam_group" "prod_admins" {
 }
 
 resource "aws_iam_group_policy_attachment" "prod_admins_administrator" {
-  group      = "${aws_iam_group.prod_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.prod_admin_role_policy_arn}"
+  group      = aws_iam_group.prod_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.prod_admin_role_policy_arn
 }
 
 resource "aws_iam_group_policy_attachment" "prod_admins_terragrunt_admin" {
-  group      = "${aws_iam_group.prod_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.terragrunt_admin_role_policy_arn}"
+  group      = aws_iam_group.prod_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.terragrunt_admin_role_policy_arn
 }
 
 resource "aws_iam_group_policy_attachment" "prod_admins_terragrunt_reader" {
-  group      = "${aws_iam_group.prod_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.terragrunt_reader_role_policy_arn}"
+  group      = aws_iam_group.prod_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.terragrunt_reader_role_policy_arn
 }
 
 resource "aws_iam_group" "non_prod_admins" {
@@ -170,18 +170,18 @@ resource "aws_iam_group" "non_prod_admins" {
 }
 
 resource "aws_iam_group_policy_attachment" "non_prod_admins_administrator" {
-  group      = "${aws_iam_group.non_prod_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.non_prod_admin_role_policy_arn}"
+  group      = aws_iam_group.non_prod_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.non_prod_admin_role_policy_arn
 }
 
 resource "aws_iam_group_policy_attachment" "non_prod_admins_terragrunt_admin" {
-  group      = "${aws_iam_group.non_prod_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.terragrunt_admin_role_policy_arn}"
+  group      = aws_iam_group.non_prod_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.terragrunt_admin_role_policy_arn
 }
 
 resource "aws_iam_group_policy_attachment" "non_prod_admins_terragrunt_reader" {
-  group      = "${aws_iam_group.non_prod_admins.name}"
-  policy_arn = "${data.terraform_remote_state.organization.terragrunt_reader_role_policy_arn}"
+  group      = aws_iam_group.non_prod_admins.name
+  policy_arn = data.terraform_remote_state.organization.outputs.terragrunt_reader_role_policy_arn
 }
 
 resource "aws_iam_group" "prod_developers" {
@@ -191,13 +191,13 @@ resource "aws_iam_group" "prod_developers" {
 module "assume_role_policy_prod_developers" {
   source       = "../../modules/assume-role-policy"
   account_name = "prod"
-  account_id   = "${data.terraform_remote_state.organization.prod_acct_id}"
-  role         = "${var.developer_role_name}"
+  account_id   = data.terraform_remote_state.organization.outputs.prod_acct_id
+  role         = var.developer_role_name
 }
 
 resource "aws_iam_group_policy_attachment" "prod_developers_developer" {
-  group      = "${aws_iam_group.prod_developers.name}"
-  policy_arn = "${module.assume_role_policy_prod_developers.policy_arn}"
+  group      = aws_iam_group.prod_developers.name
+  policy_arn = module.assume_role_policy_prod_developers.policy_arn
 }
 
 resource "aws_iam_group" "non_prod_developers" {
@@ -207,13 +207,13 @@ resource "aws_iam_group" "non_prod_developers" {
 module "assume_role_policy_non_prod_developers" {
   source       = "../../modules/assume-role-policy"
   account_name = "non-prod"
-  account_id   = "${data.terraform_remote_state.organization.non_prod_acct_id}"
-  role         = "${var.developer_role_name}"
+  account_id   = data.terraform_remote_state.organization.outputs.non_prod_acct_id
+  role         = var.developer_role_name
 }
 
 resource "aws_iam_group_policy_attachment" "non_prod_developers_developer" {
-  group      = "${aws_iam_group.non_prod_developers.name}"
-  policy_arn = "${module.assume_role_policy_non_prod_developers.policy_arn}"
+  group      = aws_iam_group.non_prod_developers.name
+  policy_arn = module.assume_role_policy_non_prod_developers.policy_arn
 }
 
 data "aws_iam_policy_document" "change_own_credentials" {
@@ -250,7 +250,7 @@ data "aws_iam_policy_document" "change_own_credentials" {
 resource "aws_iam_policy" "change_own_credentials" {
   name   = "ChangeOwnCredentials"
   path   = "/"
-  policy = "${data.aws_iam_policy_document.change_own_credentials.json}"
+  policy = data.aws_iam_policy_document.change_own_credentials.json
 }
 
 resource "aws_iam_group" "all_iam_users" {
@@ -258,6 +258,6 @@ resource "aws_iam_group" "all_iam_users" {
 }
 
 resource "aws_iam_group_policy_attachment" "all_iam_users" {
-  group      = "${aws_iam_group.all_iam_users.name}"
-  policy_arn = "${aws_iam_policy.change_own_credentials.arn}"
+  group      = aws_iam_group.all_iam_users.name
+  policy_arn = aws_iam_policy.change_own_credentials.arn
 }
