@@ -1,7 +1,7 @@
 # USERS
 module "example_admin" {
   source    = "../../modules/iam-user-group"
-  user_name = "ExampleAdmin"
+  user_name = "ExampleBilling"
 
   user_groups = [
     aws_iam_group.all_iam_users.name,
