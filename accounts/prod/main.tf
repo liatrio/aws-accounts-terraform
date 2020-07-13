@@ -3,7 +3,7 @@ terraform {
 }
 
 data "aws_caller_identity" "current" {
-  provider = "aws.noassume"
+  provider = aws.noassume
 }
 
 data "terraform_remote_state" "organization" {

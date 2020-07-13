@@ -15,7 +15,7 @@ resource "aws_organizations_organization" "org" {
 resource "aws_organizations_account" "infosec" {
   name       = "InfoSec Account"
   email      = var.infosec_acct_email
-  depends_on = ["aws_organizations_organization.org"]
+  depends_on = [aws_organizations_organization.org]
 
   lifecycle {
     prevent_destroy = true
@@ -25,7 +25,7 @@ resource "aws_organizations_account" "infosec" {
 resource "aws_organizations_account" "prod" {
   name       = "Production Account"
   email      = var.prod_acct_email
-  depends_on = ["aws_organizations_organization.org"]
+  depends_on = [aws_organizations_organization.org]
 
   lifecycle {
     prevent_destroy = true
@@ -35,7 +35,7 @@ resource "aws_organizations_account" "prod" {
 resource "aws_organizations_account" "non_prod" {
   name       = "Non-Production Account"
   email      = var.non_prod_acct_email
-  depends_on = ["aws_organizations_organization.org"]
+  depends_on = [aws_organizations_organization.org]
 
   lifecycle {
     prevent_destroy = true
@@ -89,6 +89,10 @@ data "aws_iam_policy_document" "terragrunt_admin" {
       "s3:PutBucketTagging",
       "s3:GetEncryptionConfiguration",
       "s3:PutEncryptionConfiguration",
+      "s3:GetBucketPublicAccessBlock",
+      "s3:PutBucketPublicAccessBlock",
+      "s3:GetBucketAcl",
+      "s3:PutBucketAcl",
     ]
 
     resources = [
@@ -143,7 +147,7 @@ resource "aws_iam_policy" "terragrunt_admin" {
   name        = "TerragruntAdminAccess"
   policy      = data.aws_iam_policy_document.terragrunt_admin.json
   description = "Grants permissions needed by terragrunt to manage Terraform remote state"
-  provider    = "aws.assume_infosec"
+  provider    = aws.assume_infosec
 }
 
 data "aws_iam_policy_document" "terragrunt_reader" {
@@ -176,7 +180,7 @@ resource "aws_iam_policy" "terragrunt_reader" {
   name        = "TerragruntReadAccess"
   policy      = data.aws_iam_policy_document.terragrunt_reader.json
   description = "Grants permissions to read Terraform remote state"
-  provider    = "aws.assume_infosec"
+  provider    = aws.assume_infosec
 }
 
 data "aws_iam_policy_document" "crossaccount_assume_from_infosec" {
@@ -218,7 +222,7 @@ module "cross_account_role_infosec" {
   source = "../../modules/cross-account-role"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec.json
@@ -230,7 +234,7 @@ module "cross_account_role_prod" {
   source = "../../modules/cross-account-role"
 
   providers = {
-    aws = "aws.assume_prod"
+    aws = aws.assume_prod
   }
 
   assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec.json
@@ -242,7 +246,7 @@ module "cross_account_role_non_prod" {
   source = "../../modules/cross-account-role"
 
   providers = {
-    aws = "aws.assume_non_prod"
+    aws = aws.assume_non_prod
   }
 
   assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec.json
@@ -254,7 +258,7 @@ module "cross_account_role_terragrunt_admin" {
   source = "../../modules/cross-account-role"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec_and_master.json
@@ -266,7 +270,7 @@ module "cross_account_role_terragrunt_reader" {
   source = "../../modules/cross-account-role"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   assume_role_policy_json = data.aws_iam_policy_document.crossaccount_assume_from_infosec_and_master.json
@@ -278,7 +282,7 @@ module "assume_role_policy_master_billing" {
   source = "../../modules/assume-role-policy"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   account_name = "master"
@@ -290,7 +294,7 @@ module "assume_role_policy_infosec_admin" {
   source = "../../modules/assume-role-policy"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   account_name = "infosec"
@@ -302,7 +306,7 @@ module "assume_role_policy_prod_admin" {
   source = "../../modules/assume-role-policy"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   account_name = "prod"
@@ -314,7 +318,7 @@ module "assume_role_policy_non_prod_admin" {
   source = "../../modules/assume-role-policy"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   account_name = "non-prod"
@@ -326,7 +330,7 @@ module "assume_role_policy_terragrunt_admin" {
   source = "../../modules/assume-role-policy"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   account_name = "infosec"
@@ -338,7 +342,7 @@ module "assume_role_policy_terragrunt_reader" {
   source = "../../modules/assume-role-policy"
 
   providers = {
-    aws = "aws.assume_infosec"
+    aws = aws.assume_infosec
   }
 
   account_name = "infosec"

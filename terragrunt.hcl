@@ -22,7 +22,8 @@ terraform {
   extra_arguments "shared_vars" {
     commands = get_terraform_commands_that_need_vars()
     optional_var_files = [
-      "${get_terragrunt_dir()}/${find_in_parent_folders("shared.hcl", "ignore")}"
+      "${find_in_parent_folders("shared.hcl", "ignore")}",
+      "${get_parent_terragrunt_dir()}/shared.hcl"
     ]
   }
 }

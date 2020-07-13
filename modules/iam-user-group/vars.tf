@@ -1,5 +1,5 @@
 variable "user_name" {}
 
 variable "user_groups" {
-  type = "list"
+  type = list(string)
 }

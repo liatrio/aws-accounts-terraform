@@ -4,7 +4,7 @@ terraform {
 }
 
 data "aws_caller_identity" "current" {
-  provider = "aws.noassume"
+  provider = aws.noassume
 }
 
 data "terraform_remote_state" "organization" {
@@ -239,6 +239,7 @@ data "aws_iam_policy_document" "change_own_credentials" {
       "iam:GetUser",
       "iam:*ServiceSpecificCredential*",
       "iam:*SigningCertificate*",
+      "iam:*MFADevice*",
     ]
 
     resources = [
