@@ -221,7 +221,10 @@ data "aws_iam_policy_document" "change_own_credentials" {
     sid = "ReadUsersAndPassPolicy"
 
     actions = [
+      "iam:ListVirtualMFADevices",
       "iam:ListUsers",
+      "iam:ListAccountAliases",
+      "iam:GetAccountSummary",
       "iam:GetAccountPasswordPolicy",
     ]
 
@@ -234,16 +237,80 @@ data "aws_iam_policy_document" "change_own_credentials" {
     sid = "ChangeOwnCredentials"
 
     actions = [
-      "iam:*AccessKey*",
-      "iam:ChangePassword",
+      "iam:UploadSigningCertificate",
+      "iam:UploadSSHPublicKey",
+      "iam:UpdateSigningCertificate",
+      "iam:UpdateSSHPublicKey",
+      "iam:UpdateLoginProfile",
+      "iam:UpdateAccessKey",
+      "iam:ListUserPolicies",
+      "iam:ListSigningCertificates",
+      "iam:ListServiceSpecificCredentials",
+      "iam:ListSSHPublicKeys",
+      "iam:ListAccessKeys",
       "iam:GetUser",
-      "iam:*ServiceSpecificCredential*",
-      "iam:*SigningCertificate*",
-      "iam:*MFADevice*",
+      "iam:GetSSHPublicKey",
+      "iam:GetLoginProfile",
+      "iam:GetAccessKeyLastUsed",
+      "iam:DeleteSigningCertificate",
+      "iam:DeleteSSHPublicKey",
+      "iam:DeleteLoginProfile",
+      "iam:DeleteAccessKey",
+      "iam:CreateLoginProfile",
+      "iam:CreateAccessKey",
+      "iam:ChangePassword",
     ]
 
     resources = [
       "arn:aws:iam::*:user/&{aws:username}",
+    ]
+  }
+
+  statement {
+    sid = "ListMFA"
+
+    actions = [
+      "iam:ListMFADevices",
+    ]
+
+    resources = [
+      "arn:aws:iam::*:user/&{aws:username}",
+      "arn:aws:iam::*:mfa/*",
+    ]
+  }
+
+  statement {
+    sid = "ManageOwnMFA"
+
+    actions = [
+      "iam:ResyncMFADevice",
+      "iam:EnableMFADevice",
+      "iam:DeleteVirtualMFADevice",
+      "iam:CreateVirtualMFADevice",
+    ]
+
+    resources = [
+      "arn:aws:iam::*:user/&{aws:username}",
+      "arn:aws:iam::*:mfa/&{aws:username}",
+    ]
+  }
+
+  statement {
+    sid = "DeactivateOwnMFAOnlyWhenUsingMFA"
+
+    actions = [
+      "iam:DeactivateMFADevice",
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:MultiFactorAuthPresent"
+      values   = ["true"]
+    }
+
+    resources = [
+      "arn:aws:iam::*:user/&{aws:username}",
+      "arn:aws:iam::*:mfa/&{aws:username}",
     ]
   }
 }
