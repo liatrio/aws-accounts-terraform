@@ -7,6 +7,10 @@ variable "billing_default_arn" {}
 variable "aws_default_region" {}
 variable "org_name" {}
 
+variable "enable_guardduty" {
+  default = 0
+}
+
 variable "terraform_state_bucket" {}
 variable "terraform_state_dynamodb_table" {}
 

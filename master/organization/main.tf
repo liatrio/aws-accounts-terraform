@@ -5,11 +5,29 @@ terraform {
 data "aws_caller_identity" "current" {}
 
 resource "aws_organizations_organization" "org" {
+  aws_service_access_principals = ["guardduty.amazonaws.com"]
+  enabled_policy_types = ["SERVICE_CONTROL_POLICY"]
   feature_set = "ALL"
 
   lifecycle {
     prevent_destroy = true
   }
+}
+
+resource "aws_guardduty_detector" "master" {
+  count = var.enable_guardduty
+}
+
+resource "aws_guardduty_organization_admin_account" "infosec" {
+  depends_on = [aws_organizations_organization.org]
+  admin_account_id = aws_organizations_account.infosec.id
+  count = var.enable_guardduty
+}
+
+resource "aws_guardduty_organization_configuration" "master" {
+  auto_enable = true
+  detector_id = aws_guardduty_detector.master[0].id
+  count = var.enable_guardduty
 }
 
 resource "aws_organizations_account" "infosec" {

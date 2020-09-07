@@ -2,7 +2,7 @@
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "AllowOrgCreation",
+            "Sid": "AllowOrgManagement",
             "Effect": "Allow",
             "Action": [
                 "organizations:CreateOrganization",
@@ -14,7 +14,19 @@
                 "organizations:ListRoots",
                 "organizations:ListAWSServiceAccessForOrganization",
                 "organizations:ListParents",
-                "organizations:ListTagsForResource"
+                "organizations:ListTagsForResource",
+                "organizations:ListPolicies",
+                "organizations:ListTargetsForPolicy",
+                "organizations:ListPoliciesForTarget",
+                "organizations:DescribeEffectivePolicy",
+                "organizations:CreatePolicy",
+                "organizations:DeletePolicy",
+                "organizations:DescribePolicy",
+                "organizations:UpdatePolicy",
+                "organizations:AttachPolicy",
+                "organizations:DetachPolicy",
+                "organizations:EnableAWSServiceAccess",
+                "organizations:RegisterDelegatedAdministrator"
             ],
             "Resource": [
                 "*"
@@ -81,6 +93,44 @@
             ],
             "Resource": [
                 "arn:aws:iam::*:user/terraform-init"
+            ]
+        },
+        {
+            "Sid": "AllowGuardDutyManagement",
+            "Effect": "Allow",
+            "Action": [
+                "guardduty:EnableOrganizationAdminAccount",
+                "guardduty:CreateDetector",
+                "guardduty:ListDetectors",
+                "guardduty:DisableOrganizationAdminAccount",
+                "guardduty:ListOrganizationAdminAccounts"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "AllowGuardDutyDetectorManagement",
+            "Effect": "Allow",
+            "Action": [
+                "guardduty:DeleteMembers",
+                "guardduty:GetMasterAccount",
+                "guardduty:UpdateDetector",
+                "guardduty:DisassociateMembers",
+                "guardduty:GetMembers",
+                "guardduty:UpdateOrganizationConfiguration",
+                "guardduty:GetDetector",
+                "guardduty:AcceptInvitation",
+                "guardduty:StopMonitoringMembers",
+                "guardduty:StartMonitoringMembers",
+                "guardduty:CreateMembers",
+                "guardduty:DescribeOrganizationConfiguration",
+                "guardduty:DeleteDetector",
+                "guardduty:InviteMembers",
+                "guardduty:ListMembers"
+            ],
+            "Resource": [
+                "arn:aws:guardduty:*:*:detector/*"
             ]
         },
         {

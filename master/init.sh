@@ -10,11 +10,12 @@ function usage {
     echo ""
     echo "USAGE:"
     echo "  init.sh -a terraform_init_access_key -s terraform_init_secret_key -k keybase_profile"
-    echo "  [-r default_region] [-l] [-u user_name]"
+    echo "  [-r default_region] [-l] [-i infosec_acct_id] [-u user_name] [-g]"
     echo ""
     echo "OPTIONS"
-    echo "  -l   skip using local state, can be used after the inital run"
+    echo "  -l   skip using local state, can be used after the inital run, must provide infosec_acct_id"
     echo "  -u   generate a password for a specified user - will only work if the user does not already have a password"
+    echo "  -g   enable guardduty"
 }
 
 function pushd () {
@@ -25,14 +26,16 @@ function popd () {
     command popd "$@" > /dev/null
 }
 
-while getopts "a:s:k:r:lu:h" option; do
+while getopts "a:s:k:r:li:u:gh" option; do
     case ${option} in
         a ) ACCESS_KEY=$OPTARG;;
         s ) SECRET_KEY=$OPTARG;;
         k ) KEYBASE_PROFILE=$OPTARG;;
         r ) DEFAULT_REGION=$OPTARG;;
         l ) SKIP_LOCAL_STATE=1;;
+        i ) INFOSEC_AWS_ACCT=$OPTARG;;
         u ) LOGIN_USER=$OPTARG;;
+        g ) export TF_VAR_enable_guardduty=1;;
         h )
             usage
             exit 0
@@ -55,6 +58,10 @@ if [[ -z "${SECRET_KEY}" ]]; then
 fi
 if [[ -z "${KEYBASE_PROFILE}" ]]; then
     echo "Please provide the keybase profile as -k profile " 1>&2
+    VALIDATION_ERROR=1
+fi
+if [[ -n "${SKIP_LOCAL_STATE}" && -z "${INFOSEC_AWS_ACCT}" ]]; then
+    echo "Please provide the infosec account ID as -i infosec_acct_id " 1>&2
     VALIDATION_ERROR=1
 fi
 if [[ -n "${VALIDATION_ERROR}" ]]; then
@@ -80,10 +87,11 @@ pushd ./organization
 export_master_keys
 if [[ -n "${SKIP_LOCAL_STATE}" ]]; then
     echo "=== RUNNING ORG CONFIGS WITH REMOTE STATE ==="
-    INFOSEC_AWS_ACCT=$(terraform output infosec_acct_id)
-    export "TG_AWS_ACCT=${INFOSEC_AWS_ACCT}"
+    export TG_AWS_ACCT=${INFOSEC_AWS_ACCT}
+    terragrunt init
     terragrunt apply
-    unset "TG_AWS_ACCT"
+    exit
+    unset TG_AWS_ACCT
 else
     echo "=== RUNNING ORG CONFIGS WITH LOCAL STATE ==="
     cp overrides/backend_local_override.tf .
