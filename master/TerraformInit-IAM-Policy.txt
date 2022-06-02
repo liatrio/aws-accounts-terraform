@@ -49,7 +49,9 @@
                 "iam:GetRole",
                 "iam:CreateRole",
                 "iam:ListAttachedRolePolicies",
+                "iam:ListRolePolicies",
                 "iam:AttachRolePolicy",
+                "iam:ListInstanceProfilesForRole",
                 "iam:UpdateAssumeRolePolicy"
             ],
             "Resource": [
